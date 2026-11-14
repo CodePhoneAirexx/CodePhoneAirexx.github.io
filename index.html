@@ -18,21 +18,53 @@ body {
   color: white;
   font-family: Arial, sans-serif;
   min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.light {
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #ff0033;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  z-index: 1000;
+  transition: .2s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.06);
+  background: #ff5566;
 }
 
 header {
   text-align: center;
   padding: 55px 20px 35px;
   background: radial-gradient(ellipse at top, #28204b, #08090e 75%);
+  transition: background 0.3s;
+}
+
+body.light header {
+  background: radial-gradient(ellipse at top, #ffdddd, #f5f5f5 75%);
 }
 
 .avatar {
   width: 135px;
   height: 135px;
   border-radius: 50%;
-  border: 4px solid #9b69ff;
+  border: 4px solid #ff5566;
   object-fit: cover;
-  box-shadow: 0 0 35px #8045ff66;
+  box-shadow: 0 0 35px #ff556666;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 h1 {
@@ -40,9 +72,34 @@ h1 {
   font-size: 36px;
 }
 
+h1 a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+h1 a:hover {
+  color: #ff5566;
+}
+
 .handle {
   color: #aaa;
   margin-top: 8px;
+  transition: color 0.3s;
+}
+
+body.light .handle {
+  color: #666;
+}
+
+.handle a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.handle a:hover {
+  color: #ff5566;
 }
 
 .subscribe {
@@ -59,7 +116,7 @@ h1 {
 
 .subscribe:hover {
   transform: scale(1.06);
-  background: #d9002b;
+  background: #ff5566;
 }
 
 main {
@@ -87,9 +144,15 @@ h2 {
   transition: .25s;
 }
 
+body.light .video {
+  background: white;
+  border: 1px solid #ddd;
+}
+
 .video:hover {
   transform: translateY(-5px);
-  border-color: #9b69ff;
+  border-color: #ff5566;
+  box-shadow: 0 5px 20px #ff556633;
 }
 
 .video img {
@@ -110,9 +173,14 @@ h2 {
 }
 
 .video a {
-  color: #b28cff;
+  color: #ff5566;
   text-decoration: none;
   font-weight: bold;
+  transition: color 0.2s;
+}
+
+.video a:hover {
+  color: #ff0033;
 }
 
 .status {
@@ -121,11 +189,21 @@ h2 {
   padding: 20px;
 }
 
+body.light .status {
+  color: #666;
+}
+
 footer {
   text-align: center;
   padding: 25px;
   color: #777;
   border-top: 1px solid #222;
+  transition: border-color 0.3s, color 0.3s;
+}
+
+body.light footer {
+  color: #999;
+  border-top: 1px solid #ddd;
 }
 
 </style>
@@ -133,19 +211,19 @@ footer {
 
 <body>
 
+<button class="theme-toggle" onclick="toggleTheme()">🌓 Тема</button>
+
 <header>
   <img id="avatar" class="avatar"
   src="https://placehold.co/300x300/191525/ffffff?text=A"
   alt="Airexx Avatar">
 
-  <h1 id="channelName">Airexx</h1>
-  <p class="handle">@Airexx_play</p>
-
-  <a class="subscribe"
-  href="https://www.youtube.com/@Airexx_play"
-  target="_blank">
-    Перейти на канал
-  </a>
+  <h1>
+    <a id="channelName" href="https://www.youtube.com/@Airexx_play" target="_blank">Airexx</a>
+  </h1>
+  <p class="handle">
+    <a href="https://www.youtube.com/@Airexx_play" target="_blank">@Airexx_play</a>
+  </p>
 </header>
 
 <main>
@@ -171,6 +249,21 @@ const API_KEY = "AIzaSyBWa1LzC31chJroOA9YvSNI1VEt9JQAEHo";
 const HANDLE = "@Airexx_play";
 
 const API = "https://www.googleapis.com/youtube/v3/";
+
+// Переключение темы
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  const isLight = document.body.classList.contains('light');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+
+// Загрузка сохраненной темы
+function loadTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') {
+    document.body.classList.add('light');
+  }
+}
 
 async function request(endpoint, params) {
   const url = new URL(API + endpoint);
@@ -303,6 +396,8 @@ async function loadChannel() {
   }
 }
 
+// Загружаем тему при старте
+loadTheme();
 loadChannel();
 </script>
 
